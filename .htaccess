@@ -1,0 +1,4 @@
+RewriteEngine on
+RewriteCond %{REQUEST_FILENSME}% !-d
+RewriteCond %{REQUEST_FILENSME}% !-f
+RewriteRule . index.php [L]
