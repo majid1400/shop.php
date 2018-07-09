@@ -7,15 +7,15 @@ namespace App\Services\Router;
 use App\Core\Request;
 
 class Router{
+    private static $urls;
     private static $base_namespace_controler = "App\Controllers\\";
     private static $base_namespace_middleware = "App\Middleware\\";
 
     public static function Register()
     {
+        self::$urls = include_once ROUTES . "urls.php";
 
         $curent_url = self::get_curent_url();
-
-
 
         if (self::is_url_defined($curent_url)){
 
@@ -25,18 +25,26 @@ class Router{
                 exit();
             }
 
-            $Request = new Request();
-            # گرفتن میدل ور ها
-            $middleware = self::get_url_middleware($curent_url);
-            $middlewareClass = self::$base_namespace_middleware.$middleware;
-            $middleware_instance = new $middlewareClass;
-            $middleware_instance->handel($Request);
 
             # گرفتن تارگت ها
             list($Controler, $method) = explode("@",self::get_url_target($curent_url));
             $controllerClass = self::$base_namespace_controler.$Controler;
             $controller_instance= new $controllerClass;
-            $controller_instance->$method();
+
+            if (method_exists($controller_instance,$method)){
+                $Request = new Request();
+                # گرفتن میدل ور ها
+                $middleware = self::get_url_middleware($curent_url);
+                $middlewareClass = self::$base_namespace_middleware.$middleware;
+                if (class_exists($middlewareClass)){
+                    $middleware_instance = new $middlewareClass;
+                    $middleware_instance->handel($Request);
+                }
+
+                $controller_instance->$method($Request);
+            }else{
+                echo 'invalid operation';
+            }
 
 
         }else{
@@ -51,13 +59,13 @@ class Router{
     # کل url ها را دریافت می کنیم
     public static function get_all_url()
     {
-        return include ROUTES . "urls.php";
+        return self::$urls;
     }
 
     # فقط url جاری را دریافت می کنیم
     public static function get_curent_url()
     {
-        return strtok($_SERVER['REQUEST_URI'], "?");
+        return strtok(strtolower($_SERVER['REQUEST_URI']), "?");
     }
 
     # بررسی می کند url کاربر در urlهای تعریف شده وجود دارد یا خیر
@@ -88,7 +96,6 @@ class Router{
     public static function get_url_middleware($key)
     {
         $url = self::get_all_url();
-        $target_str = $url[$key]['middleware'];
-        return $target_str;
+        return $url[$key]['middleware'] ?? null;
     }
 }
