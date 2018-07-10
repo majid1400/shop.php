@@ -5,6 +5,7 @@ namespace App\Services\Router;
 
 
 use App\Core\Request;
+use App\Services\View\View;
 
 class Router{
     private static $urls;
@@ -48,7 +49,7 @@ class Router{
 
 
         }else{
-            echo 'page 404 not find ...';
+            View::load('error.404');
         }
 
 

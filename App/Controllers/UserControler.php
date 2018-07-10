@@ -24,4 +24,13 @@ class UserControler{
 
         View::load('user.order',compact('order','user'));
     }
+
+    public function register($Request)
+    {
+        $data = [
+            'username' => 'ali mohamadi',
+        ];
+        $msg = View::render("templates.mail.html-read",$data);
+        echo $msg;
+    }
 }
