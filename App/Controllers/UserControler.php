@@ -2,27 +2,22 @@
 
 namespace App\Controllers;
 
-use App\Models\UserModel;
+use App\Models\User;
+use App\Repos\UserRepo;
 use App\Services\Database\DbConnection;
 use App\Services\View\View;
 
 class UserControler{
-    private $model;
+    private $userRepo;
     public function __construct()
     {
-        $this->model = new UserModel();
+        $this->userRepo = new UserRepo();
     }
 
     public function orders($Request)
     {
-        $order = [
-            ['mahsol yek' => 'khodro', 'cost' => 123578],
-            ['mahsol yek' => 'praid', 'cost' => 123578],
-        ];
-
-        $user = $this->model->findAll();
-
-        View::load('user.order',compact('order','user'));
+        $users = $this->userRepo::find(1);
+        var_dump($users);
     }
 
     public function register($Request)
