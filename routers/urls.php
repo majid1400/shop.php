@@ -18,4 +18,8 @@ return [
         'target' => 'UserControler@register',
         'middleware' => 'Security',
     ],
+    "/product/item" => [
+        'method' => 'get',
+        'target' => 'ProductControler@item',
+    ],
 ];
